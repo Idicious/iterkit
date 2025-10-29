@@ -1,0 +1,17 @@
+{
+  "name": "async-gen",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest"
+  },
+  "keywords": [],
+  "author": "",
+  "type": "module",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.5"
+  }
+}

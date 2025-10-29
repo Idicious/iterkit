@@ -1,0 +1,139 @@
+import type { AsyncGenFn, Operator } from "./types.js";
+import { sleep } from "./utils.js";
+
+export const identity = <T>(value: T) => {
+  return (async function* () {
+    yield value;
+  })();
+};
+
+export const map = <T, U, TArgs extends unknown[]>(
+  fn: (item: T) => U
+): Operator<T, U, TArgs> => {
+  return (source) => {
+    return async function* (...args: TArgs) {
+      for await (const item of source(...args)) {
+        yield fn(item);
+      }
+    };
+  };
+};
+
+export const filter = <T, TArgs extends unknown[]>(
+  predicate: (item: T) => boolean
+): Operator<T, T, TArgs> => {
+  return (source) => {
+    return async function* (...args: TArgs) {
+      for await (const item of source(...args)) {
+        if (predicate(item)) {
+          yield item;
+        }
+      }
+    };
+  };
+};
+
+export const take = <T, TArgs extends unknown[]>(
+  count: number
+): Operator<T, T, TArgs> => {
+  return (source) => {
+    return async function* (...args: TArgs) {
+      let taken = 0;
+      for await (const item of source(...args)) {
+        if (taken++ >= count) break;
+        yield item;
+      }
+    };
+  };
+};
+
+export const skip = <T, TArgs extends unknown[]>(
+  count: number
+): Operator<T, T, TArgs> => {
+  return (source) => {
+    return async function* (...args: TArgs) {
+      let skipped = 0;
+      for await (const item of source(...args)) {
+        if (skipped++ < count) continue;
+        yield item;
+      }
+    };
+  };
+};
+
+export const delay = <T, TArgs extends unknown[]>(
+  ms: number
+): Operator<T, T, TArgs> => {
+  return (source) =>
+    async function* (...args: TArgs) {
+      for await (const item of source(...args)) {
+        await new Promise((resolve) => setTimeout(resolve, ms));
+        yield item;
+      }
+    };
+};
+
+export const catchError = <T, TArgs extends unknown[]>(
+  onError: (error: unknown, ...args: TArgs) => AsyncIterable<T>
+): Operator<T, T, TArgs> => {
+  return (source) => {
+    return async function* (...args: TArgs) {
+      try {
+        for await (const item of source(...args)) {
+          yield item;
+        }
+      } catch (error: unknown) {
+        for await (const item of onError(error, ...args)) {
+          yield item;
+        }
+      }
+    };
+  };
+};
+
+export const catchErrorDefault = <T, TArgs extends unknown[]>(
+  defaultValue: (error: unknown, ...args: TArgs) => T
+) => {
+  return catchError((error, ...args: TArgs) =>
+    identity(defaultValue(error, ...args))
+  );
+};
+
+export const retry =
+  <T, TArgs extends unknown[]>(
+    maxRetries = 1,
+    delayMs = 0
+  ): Operator<T, T, TArgs> =>
+  (source) =>
+    async function* (...args: TArgs) {
+      for (let attempt = 0; ; attempt++) {
+        try {
+          yield* source(...args);
+          return;
+        } catch (error) {
+          if (attempt >= maxRetries) throw error;
+          if (delayMs) await sleep(delayMs);
+        }
+      }
+    };
+
+export const takeAll = async <T>(source: AsyncIterable<T>): Promise<T[]> => {
+  const result: T[] = [];
+  for await (const item of source) {
+    result.push(item);
+  }
+  return result;
+};
+
+export const withCancellation = <T, TArgs extends unknown[]>(
+  source: AsyncGenFn<T, TArgs>
+): ((signal: AbortSignal) => AsyncGenFn<T, TArgs>) => {
+  return (signal: AbortSignal) => {
+    return async function* (...args: TArgs) {
+      for await (const item of source(...args)) {
+        if (signal.aborted) return;
+        yield item;
+      }
+    };
+  };
+};
