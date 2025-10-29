@@ -117,6 +117,16 @@ export const retry =
       }
     };
 
+export const throwError = <T, TArgs extends unknown[]>(
+  fn: () => Error
+): Operator<T, T, TArgs> => {
+  return () => {
+    return async function* () {
+      throw fn();
+    };
+  };
+};
+
 export const takeAll = async <T>(source: AsyncIterable<T>): Promise<T[]> => {
   const result: T[] = [];
   for await (const item of source) {
