@@ -31,20 +31,29 @@ describe("fetch test", () => {
 
   test("should map fetch responses to JSON", async () => {
     const baseUrl = "http://localhost";
+    const accountId = "account-id";
 
     const scope = nock(baseUrl)
       .get("/posts/1")
+      .matchHeader("X-Account-ID", accountId)
       .reply(200, { id: 1, title: "Post 1" })
       .get("/posts/2")
+      .matchHeader("X-Account-ID", accountId)
       .reply(200, { id: 2, title: "Post 2" });
 
     const fetchAndParse = pipe(
-      map((id: string) => fetch(new URL(`/posts/${id}`, baseUrl))),
+      map((id: string, accountId: string) =>
+        fetch(new URL(`/posts/${id}`, baseUrl), {
+          headers: {
+            "X-Account-ID": accountId,
+          },
+        })
+      ),
       map((response) => response.json() as Promise<Post>)
     );
 
-    const execute = fetchAndParse(from(["1", "2"]));
-    const result = await Array.fromAsync(execute());
+    const fetchForAccount = fetchAndParse(from(["1", "2"]));
+    const result = await Array.fromAsync(fetchForAccount(accountId));
 
     expect(result).toEqual([
       expect.objectContaining({ id: 1 }),
