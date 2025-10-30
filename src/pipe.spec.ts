@@ -5,9 +5,7 @@ import { catchErrorDefault, filter, map } from "./operators.js";
 
 describe("pipe", () => {
   test("should pipe multiple operators correctly", async () => {
-    function gen(n: number) {
-      return [n, n + 1, n + 2];
-    }
+    const gen = (n: number) => [n, n + 1, n + 2, n + 3];
 
     const isEven = (x: number) => x % 2 === 0;
 

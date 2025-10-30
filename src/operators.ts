@@ -4,11 +4,11 @@ import { sleep } from "./utils.js";
 
 export const map = <T, U, TArgs extends unknown[]>(
   fn: (item: T, ...args: TArgs) => U
-): Operator<T, U, TArgs> => {
+): Operator<T, Awaited<U>, TArgs> => {
   return (source) => {
     return async function* (...args: TArgs) {
       for await (const item of source(...args)) {
-        yield fn(item, ...args);
+        yield await fn(item, ...args);
       }
     };
   };
