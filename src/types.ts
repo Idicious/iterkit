@@ -11,5 +11,5 @@ export type GenFn<TReturn, TArgs extends unknown[]> =
   | AsyncGenFn<TReturn, TArgs>;
 
 export type Operator<TInput, TOutput, TArgs extends unknown[]> = (
-  source: GenFn<TInput, unknown[]>
+  source: GenFn<TInput, any[]>
 ) => AsyncGenFn<TOutput, TArgs>;

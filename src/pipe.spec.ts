@@ -9,14 +9,17 @@ describe("pipe", () => {
       yield* from(n, n + 1, n + 2);
     }
 
-    const piped = pipe(
-      gen,
-      map((x) => x + 1),
-      filter((x) => x % 2 === 0),
+    const isEven = (x: number) => x % 2 === 0;
+
+    const transform = pipe(
+      map((n: number, ..._args: [start: number]) => n + 1),
+      filter(isEven),
       catchErrorDefault((_, n) => n)
     );
 
-    const result = await Array.fromAsync(piped(1));
+    const transformed = transform(gen);
+
+    const result = await Array.fromAsync(transformed(1));
     expect(result).toEqual([2, 4]);
   });
 });
