@@ -1,31 +1,26 @@
-import type { AsyncGenFn, Operator } from "./types.js";
+import { identity } from "./producers.js";
+import type { AsyncGenFn, GenFn, Operator } from "./types.js";
 import { sleep } from "./utils.js";
 
-export const identity = <T>(value: T) => {
-  return (async function* () {
-    yield value;
-  })();
-};
-
 export const map = <T, U, TArgs extends unknown[]>(
-  fn: (item: T) => U
+  fn: (item: T, ...args: TArgs) => U
 ): Operator<T, U, TArgs> => {
   return (source) => {
     return async function* (...args: TArgs) {
       for await (const item of source(...args)) {
-        yield fn(item);
+        yield fn(item, ...args);
       }
     };
   };
 };
 
 export const filter = <T, TArgs extends unknown[]>(
-  predicate: (item: T) => boolean
+  predicate: (item: T, ...args: TArgs) => boolean
 ): Operator<T, T, TArgs> => {
   return (source) => {
     return async function* (...args: TArgs) {
       for await (const item of source(...args)) {
-        if (predicate(item)) {
+        if (predicate(item, ...args)) {
           yield item;
         }
       }
@@ -74,7 +69,7 @@ export const delay = <T, TArgs extends unknown[]>(
 };
 
 export const catchError = <T, TArgs extends unknown[]>(
-  onError: (error: unknown, ...args: TArgs) => AsyncIterable<T>
+  onError: (error: unknown, ...args: TArgs) => AsyncIterable<T> | Iterable<T>
 ): Operator<T, T, TArgs> => {
   return (source) => {
     return async function* (...args: TArgs) {
@@ -118,25 +113,17 @@ export const retry =
     };
 
 export const throwError = <T, TArgs extends unknown[]>(
-  fn: () => Error
+  fn: (...args: TArgs) => Error
 ): Operator<T, T, TArgs> => {
   return () => {
-    return async function* () {
-      throw fn();
+    return async function* (...args: TArgs) {
+      throw fn(...args);
     };
   };
 };
 
-export const takeAll = async <T>(source: AsyncIterable<T>): Promise<T[]> => {
-  const result: T[] = [];
-  for await (const item of source) {
-    result.push(item);
-  }
-  return result;
-};
-
 export const withCancellation = <T, TArgs extends unknown[]>(
-  source: AsyncGenFn<T, TArgs>
+  source: GenFn<T, TArgs>
 ): ((signal: AbortSignal) => AsyncGenFn<T, TArgs>) => {
   return (signal: AbortSignal) => {
     return async function* (...args: TArgs) {
