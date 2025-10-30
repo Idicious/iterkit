@@ -68,6 +68,18 @@ export const delay = <T, TArgs extends unknown[]>(
     };
 };
 
+export const concatMap = <T, U, TArgs extends unknown[]>(
+  fn: (item: T, ...args: TArgs) => AsyncIterable<U> | Iterable<U>
+): Operator<T, U, TArgs> => {
+  return (source) => {
+    return async function* (...args: TArgs) {
+      for await (const item of source(...args)) {
+        yield* fn(item, ...args);
+      }
+    };
+  };
+};
+
 export const catchError = <T, TArgs extends unknown[]>(
   onError: (error: unknown, ...args: TArgs) => AsyncIterable<T> | Iterable<T>
 ): Operator<T, T, TArgs> => {

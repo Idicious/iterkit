@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test } from "vitest";
 import nock from "nock";
-import { filter, map } from "./operators.js";
+import { concatMap, filter, map } from "./operators.js";
 import { from } from "./producers.js";
 import { pipe } from "./pipe.js";
 
@@ -19,6 +19,14 @@ describe("operators", () => {
 
     const result = await Array.fromAsync(filtered());
     expect(result).toEqual([2, 4, 6]);
+  });
+
+  test("concatMap", async () => {
+    const stream = concatMap((x: number) => [1 * x, 2 * x, 3 * x]);
+    const concatenated = stream(from([1, 2]));
+
+    const result = await Array.fromAsync(concatenated());
+    expect(result).toEqual([1, 2, 3, 2, 4, 6]);
   });
 });
 
