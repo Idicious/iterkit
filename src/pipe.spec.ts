@@ -10,9 +10,9 @@ describe("pipe", () => {
     const isEven = (x: number) => x % 2 === 0;
 
     const transform = pipe(
-      map((n: number, ..._args: [start: number]) => n + 1),
+      map<number, number, [start: number]>((n, start) => n + start),
       filter(isEven),
-      catchErrorDefault((_, n) => n)
+      catchErrorDefault((_) => 0)
     );
 
     const transformed = transform(gen);
