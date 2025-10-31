@@ -6,7 +6,7 @@ import { from } from "./producers.js";
 
 type Post = { id: number; title: string };
 
-describe("integration:fetch test", () => {
+describe("integration:fetch", () => {
   beforeAll(() => nock.disableNetConnect());
   afterAll(() => nock.enableNetConnect());
 
@@ -19,12 +19,11 @@ describe("integration:fetch test", () => {
     const scope = nock(baseUrl)
       .matchHeader("x-account-id", accountId)
       .get("/posts/2")
-      .reply(200, { id: 2, title: "Post 2" })
-      .get("/posts/3")
-      .reply(200, { id: 3, title: "Post 3" });
+      .reply(200, { id: 2, title: "Post 2" });
 
     const fetchAndParse = pipe(
       skip<string, [string]>(1),
+      take(1),
       map((id, accountId) =>
         fetch(new URL(`/posts/${id}`, baseUrl), {
           headers: {
@@ -32,8 +31,7 @@ describe("integration:fetch test", () => {
           },
         })
       ),
-      map((res) => res.json() as Promise<Post>),
-      take(1)
+      map((res) => res.json() as Promise<Post>)
     );
 
     const fetchForAccount = fetchAndParse(from(["1", "2", "3"]));
