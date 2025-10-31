@@ -1,5 +1,7 @@
-export function* identity<T>(value: T): Iterable<T> {
-  yield value;
+export function* of<T>(...values: T[]) {
+  for (const value of values) {
+    yield value;
+  }
 }
 
 export function from<T>(it: Iterable<T>) {

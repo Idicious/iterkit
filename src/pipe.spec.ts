@@ -1,16 +1,15 @@
 import { describe, expect, test } from "vitest";
 import { from, fromPromise } from "./producers.js";
 import { pipe } from "./pipe.js";
-import { catchErrorDefault, filter, map, type } from "./operators.js";
+import { catchErrorDefault, filter, map, identity } from "./operators.js";
 
 describe("pipe", () => {
   test("should pipe multiple operators correctly", async () => {
     const gen = (n: number) => [n, n + 1, n + 2, n + 3];
-
     const isEven = (x: number) => x % 2 === 0;
 
     const transform = pipe(
-      type<number, [start: number]>(),
+      identity<number, [start: number]>(),
       map((n, start) => n + start),
       filter(isEven),
       catchErrorDefault((_) => 0)

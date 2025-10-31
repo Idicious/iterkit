@@ -1,4 +1,4 @@
-import { identity } from "./producers.js";
+import { of } from "./producers.js";
 import type { AsyncGenFn, GenFn, Operator } from "./types.js";
 import { sleep } from "./utils.js";
 
@@ -14,7 +14,7 @@ export const map = <T, U, TArgs extends unknown[]>(
   };
 };
 
-export const type =
+export const identity =
   <T, TArgs extends unknown[] = []>(): Operator<T, T, TArgs> =>
   (source) =>
     source as AsyncGenFn<T, TArgs>;
@@ -107,7 +107,7 @@ export const catchErrorDefault = <T, TArgs extends unknown[]>(
   defaultValue: (error: unknown, ...args: TArgs) => T
 ) => {
   return catchError((error, ...args: TArgs) =>
-    identity(defaultValue(error, ...args))
+    of(defaultValue(error, ...args))
   );
 };
 
