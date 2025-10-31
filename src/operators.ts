@@ -1,5 +1,5 @@
 import { of } from "./producers.js";
-import type { AsyncGenFn, GenFn, Operator } from "./types.js";
+import type { GenFn, Operator } from "./types.js";
 import { sleep } from "./utils.js";
 
 export const map = <T, U, TArgs extends unknown[]>(
@@ -17,7 +17,7 @@ export const map = <T, U, TArgs extends unknown[]>(
 export const identity =
   <T, TArgs extends unknown[] = []>(): Operator<T, T, TArgs> =>
   (source) =>
-    source as AsyncGenFn<T, TArgs>;
+    source;
 
 export const filter = <T, TArgs extends unknown[]>(
   predicate: (item: T, ...args: TArgs) => boolean
@@ -67,7 +67,7 @@ export const delay = <T, TArgs extends unknown[]>(
   return (source) =>
     async function* (...args: TArgs) {
       for await (const item of source(...args)) {
-        await new Promise((resolve) => setTimeout(resolve, ms));
+        await sleep(ms);
         yield item;
       }
     };
@@ -141,7 +141,7 @@ export const throwError = <T, TArgs extends unknown[]>(
 
 export const withCancellation = <T, TArgs extends unknown[]>(
   source: GenFn<T, TArgs>
-): ((signal: AbortSignal) => AsyncGenFn<T, TArgs>) => {
+): ((signal: AbortSignal) => GenFn<T, TArgs>) => {
   return (signal: AbortSignal) => {
     return async function* (...args: TArgs) {
       for await (const item of source(...args)) {

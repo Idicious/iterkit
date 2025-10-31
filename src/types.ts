@@ -12,4 +12,4 @@ export type GenFn<T, TArgs extends unknown[] = []> =
 
 export type Operator<TInput, TOutput, TArgs extends unknown[] = []> = (
   source: GenFn<TInput, any[]>
-) => AsyncGenFn<TOutput, TArgs>;
+) => GenFn<TOutput, TArgs>;

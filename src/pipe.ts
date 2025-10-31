@@ -1,4 +1,4 @@
-import type { AsyncGenFn, Operator } from "./types.js";
+import type { Operator } from "./types.js";
 
 export function pipe<A, TArgs extends unknown[] = []>(): Operator<A, A, TArgs>;
 export function pipe<A, R, TArgs extends unknown[] = []>(
@@ -30,8 +30,5 @@ export function pipe<A, R, TArgs extends unknown[] = []>(
   ...operators: Operator<any, any, any[]>[]
 ): Operator<A, R, TArgs> {
   return (source) =>
-    operators.reduce(
-      (prevSource, operator) => operator(prevSource),
-      source as AsyncGenFn<A, TArgs>
-    );
+    operators.reduce((prevSource, operator) => operator(prevSource), source);
 }
