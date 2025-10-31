@@ -14,6 +14,11 @@ export const map = <T, U, TArgs extends unknown[]>(
   };
 };
 
+export const type =
+  <T, TArgs extends unknown[] = []>(): Operator<T, T, TArgs> =>
+  (source) =>
+    source as AsyncGenFn<T, TArgs>;
+
 export const filter = <T, TArgs extends unknown[]>(
   predicate: (item: T, ...args: TArgs) => boolean
 ): Operator<T, T, TArgs> => {

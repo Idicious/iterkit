@@ -1,7 +1,7 @@
 import nock from "nock";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 import { pipe } from "./pipe.js";
-import { map, skip, take } from "./operators.js";
+import { map, skip, take, type } from "./operators.js";
 import { from } from "./producers.js";
 
 type Post = { id: number; title: string };
@@ -22,7 +22,8 @@ describe("integration:fetch", () => {
       .reply(200, { id: 2, title: "Post 2" });
 
     const fetchAndParse = pipe(
-      skip<string, [string]>(1),
+      type<string, [string]>(),
+      skip(1),
       take(1),
       map((id, accountId) =>
         fetch(new URL(`/posts/${id}`, baseUrl), {
