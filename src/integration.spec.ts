@@ -4,8 +4,6 @@ import { pipe } from "./pipe.js";
 import { map, skip, take, identity } from "./operators.js";
 import { from } from "./producers.js";
 
-type Post = { id: number; title: string };
-
 describe("integration:fetch", () => {
   beforeAll(() => nock.disableNetConnect());
   afterAll(() => nock.enableNetConnect());
@@ -25,14 +23,7 @@ describe("integration:fetch", () => {
       identity<string, [string]>(),
       skip(1),
       take(1),
-      map((id, accountId) =>
-        fetch(new URL(`/posts/${id}`, baseUrl), {
-          headers: {
-            "x-account-id": accountId,
-          },
-        })
-      ),
-      map((res) => res.json() as Promise<Post>)
+      map(fetchPost)
     );
 
     const fetchForAccount = fetchAndParse(from(["1", "2", "3"]));
@@ -43,3 +34,13 @@ describe("integration:fetch", () => {
     scope.done();
   });
 });
+
+type Post = { id: number; title: string };
+function fetchPost(id: string, accountId: string): Promise<Post> {
+  const baseUrl = "http://localhost";
+  return fetch(new URL(`/posts/${id}`, baseUrl), {
+    headers: {
+      "x-account-id": accountId,
+    },
+  }).then((res) => res.json() as Promise<Post>);
+}

@@ -20,7 +20,7 @@ export const identity =
     source;
 
 export const filter = <T, TArgs extends unknown[]>(
-  predicate: (item: T, ...args: TArgs) => boolean
+  predicate: (item: T, ...args: TArgs) => boolean | Promise<boolean>
 ): Operator<T, T, TArgs> => {
   return (source) => {
     return async function* (...args: TArgs) {
@@ -86,7 +86,7 @@ export const concatMap = <T, U, TArgs extends unknown[]>(
 };
 
 export const catchError = <T, TArgs extends unknown[]>(
-  onError: (error: unknown, ...args: TArgs) => AsyncIterable<T> | Iterable<T>
+  onError: (error: unknown, ...args: TArgs) => GenFn<T, TArgs>
 ): Operator<T, T, TArgs> => {
   return (source) => {
     return async function* (...args: TArgs) {
@@ -95,7 +95,8 @@ export const catchError = <T, TArgs extends unknown[]>(
           yield item;
         }
       } catch (error: unknown) {
-        for await (const item of onError(error, ...args)) {
+        const backupSource = onError(error, ...args);
+        for await (const item of backupSource(...args)) {
           yield item;
         }
       }

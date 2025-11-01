@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { concatMap, filter, map } from "./operators.js";
-import { from } from "./producers.js";
+import { catchError, concatMap, filter, map } from "./operators.js";
+import { from, of, throwError } from "./producers.js";
 
 describe("operators", () => {
   test("map", async () => {
@@ -17,6 +17,14 @@ describe("operators", () => {
 
     const result = await Array.fromAsync(filtered());
     expect(result).toEqual([2, 4, 6]);
+  });
+
+  test("catchError", async () => {
+    const catcher = catchError(() => of(1));
+    const caught = catcher(throwError(new Error("Boo")));
+
+    const result = await Array.fromAsync(caught());
+    expect(result).toEqual([1]);
   });
 
   test("concatMap", async () => {
