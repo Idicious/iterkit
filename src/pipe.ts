@@ -1,5 +1,23 @@
 import type { Operator } from "./types.js";
 
+/**
+ * Composes multiple operators into a single operator.
+ *
+ * @example
+ * ```ts @import.meta.vitest
+ * const { of, pipe, map, filter } = await import("iterkit");
+ *
+ * const transform = pipe(
+ *   map((x) => x * 2),
+ *   filter((x) => x > 5)
+ * );
+ *
+ * const source = of(1, 2, 3, 4);
+ * const result = await Array.fromAsync(transform(source)());
+ *
+ * expect(result).toEqual([6, 8]);
+ * ```
+ */
 export function pipe<A, TArgs extends unknown[] = []>(): Operator<A, A, TArgs>;
 export function pipe<A, R, TArgs extends unknown[] = []>(
   operator1: Operator<A, R, TArgs>
