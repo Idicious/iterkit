@@ -11,6 +11,10 @@
     "prepublishOnly": "npm run build"
   },
   "author": "David Sherman",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Idicious/iterkit.git"
+  },
   "type": "module",
   "license": "MIT",
   "description": "",
