@@ -10,7 +10,6 @@
     "build": "tsc -p tsconfig.lib.json",
     "prepublishOnly": "npm run build"
   },
-  "keywords": [],
   "author": "David Sherman",
   "type": "module",
   "license": "MIT",
@@ -20,5 +19,28 @@
     "nock": "^14.0.10",
     "typescript": "^5.9.3",
     "vitest": "^4.0.5"
-  }
+  },
+  "keywords": [
+    "async",
+    "generator",
+    "async-generator",
+    "iterator",
+    "async-iterator",
+    "pipeline",
+    "stream",
+    "functional",
+    "typescript",
+    "rxjs",
+    "operators",
+    "compose",
+    "composition",
+    "functional-programming",
+    "streaming",
+    "data-pipeline",
+    "iterable",
+    "asynciterable",
+    "lazy-evaluation",
+    "observable-alternative",
+    "reactive"
+  ]
 }
