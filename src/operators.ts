@@ -7,7 +7,7 @@ import { sleep } from "./utils.js";
  *
  * @example
  * ```ts @import.meta.vitest
- * const { of } = await import("iterkit");
+ * const { of, map } = await import("iterkit");
  *
  * const source = of(1, 2, 3);
  * const double = map((x) => x * 2);
@@ -36,7 +36,7 @@ export const map = <T, U, TArgs extends unknown[]>(
  *
  * @example
  * ```ts @import.meta.vitest
- * const { of } = await import("iterkit");
+ * const { of, identity } = await import("iterkit");
  *
  * const source = of(1, 2, 3);
  * const ident = identity();
@@ -56,7 +56,7 @@ export const identity =
  *
  * @example
  * ```ts @import.meta.vitest
- * const { of } = await import("iterkit");
+ * const { of, filter } = await import("iterkit");
  *
  * const source = of(1, 2, 3);
  * const isOdd = filter((x) => x % 2 === 1);
@@ -87,7 +87,7 @@ export const filter = <T, TArgs extends unknown[]>(
  *
  * @example
  * ```ts @import.meta.vitest
- * const { of } = await import("iterkit");
+ * const { of, take } = await import("iterkit");
  *
  * const source = of(1, 2, 3);
  * const takeTwo = take(2);
@@ -118,7 +118,7 @@ export const take = <T, TArgs extends unknown[]>(
  *
  * @example
  * ```ts @import.meta.vitest
- * const { of } = await import("iterkit");
+ * const { of, skip } = await import("iterkit");
  *
  * const source = of(1, 2, 3);
  * const skipOne = skip(1);
@@ -149,7 +149,7 @@ export const skip = <T, TArgs extends unknown[]>(
  *
  * @example
  * ```ts @import.meta.vitest
- * const { of } = await import("iterkit");
+ * const { of, delay } = await import("iterkit");
  *
  * const source = of(1, 2, 3);
  * const delay10Ms = delay(10);
@@ -158,8 +158,8 @@ export const skip = <T, TArgs extends unknown[]>(
  * expect(result).toEqual([1, 2, 3]);
  * ```
  *
- * @param n Number of items to take.
- * @returns An operator function that takes the first n items.
+ * @param ms Number of milliseconds to delay each item.
+ * @returns An operator function that delays the emission of each item by the specified milliseconds.
  */
 export const delay = <T, TArgs extends unknown[]>(
   ms: number
