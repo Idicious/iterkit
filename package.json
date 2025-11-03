@@ -24,8 +24,10 @@
     "nock": "^14.0.10",
     "typescript": "^5.9.3",
     "vite-plugin-doctest": "^1.1.1",
-    "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^4.0.5"
+  },
+  "exports": {
+    ".": "./src/index.ts"
   },
   "keywords": [
     "async",
@@ -45,7 +47,7 @@
     "streaming",
     "data-pipeline",
     "iterable",
-    "asynciterable",
+    "async-iterable",
     "lazy-evaluation",
     "observable-alternative",
     "reactive"

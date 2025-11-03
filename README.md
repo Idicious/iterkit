@@ -27,8 +27,8 @@ npm install iterkit
 
 ### Quick Example
 
-```ts
-import { of, pipe, map, filter } from "iterkit";
+```ts @import.meta.vitest
+const { of, pipe, map, filter } = await import("iterkit");
 
 const numbers = of(1, 2, 3, 4, 5);
 
@@ -38,7 +38,7 @@ const doubleEvens = pipe(
 );
 
 const result = await Array.fromAsync(doubleEvens(numbers)());
-console.log(result); // [4, 8]
+expect(result).toEqual([4, 8]);
 ```
 
 ---
@@ -49,7 +49,7 @@ console.log(result); // [4, 8]
 
 A `GenFn` is a function that returns an `Iterable` or `AsyncIterable`:
 
-```ts
+```ts @import.meta.vitest
 type GenFn<T, TArgs extends unknown[]> = (
   ...args: TArgs
 ) => Iterable<T> | AsyncIterable<T>;
@@ -59,7 +59,7 @@ type GenFn<T, TArgs extends unknown[]> = (
 
 An `Operator` transforms one generator function into another:
 
-```ts
+```ts @import.meta.vitest
 type Operator<TIn, TOut, TArgs extends unknown[]> = (
   source: GenFn<TIn, any[]>
 ) => GenFn<TOut, TArgs>;
@@ -71,11 +71,14 @@ Operators can be composed using `pipe`, which applies them left-to-right.
 
 The `pipe` function composes operators to form a reusable transformation:
 
-```ts
+```ts @import.meta.vitest
+const { of, pipe, map, filter } = await import("iterkit");
+
 const transform = pipe(
   map((x) => x * 2),
   filter((x) => x > 5)
 );
+
 const run = transform(of(1, 2, 3, 4));
 ```
 
