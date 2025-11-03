@@ -130,16 +130,6 @@ export const retry =
       }
     };
 
-export const throwError = <T, TArgs extends unknown[]>(
-  fn: (...args: TArgs) => Error
-): Operator<T, T, TArgs> => {
-  return () => {
-    return async function* (...args: TArgs) {
-      throw fn(...args);
-    };
-  };
-};
-
 export const withCancellation = <T, TArgs extends unknown[]>(
   source: GenFn<T, TArgs>
 ): ((signal: AbortSignal) => GenFn<T, TArgs>) => {
