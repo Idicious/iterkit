@@ -2,9 +2,6 @@
   "name": "iterkit",
   "version": "0.1.1-alpha.1",
   "main": "dist/index.js",
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "test": "vitest",
     "build": "tsc -p tsconfig.lib.json",
@@ -17,7 +14,11 @@
   },
   "type": "module",
   "license": "MIT",
-  "description": "",
+  "description": "iterkit is a lightweight TypeScript library for composing and transforming synchronous and asynchronous generator functions using a functional operator pattern.",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
   "devDependencies": {
     "@types/node": "^24.9.2",
     "nock": "^14.0.10",
