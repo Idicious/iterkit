@@ -74,7 +74,7 @@ export const filter = <T, TArgs extends unknown[]>(
   return (source) => {
     return async function* (...args: TArgs) {
       for await (const item of source(...args)) {
-        if (predicate(item, ...args)) {
+        if (await predicate(item, ...args)) {
           yield item;
         }
       }

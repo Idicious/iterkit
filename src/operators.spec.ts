@@ -19,6 +19,16 @@ describe("operators", () => {
     expect(result).toEqual([2, 4, 6]);
   });
 
+  test("filter async", async () => {
+    const isEven = filter(async (x: number) => {
+      return x % 2 === 0;
+    });
+    const filtered = isEven(from([1, 2, 3, 4, 5, 6]));
+
+    const result = await Array.fromAsync(filtered());
+    expect(result).toEqual([2, 4, 6]);
+  });
+
   test("catchError", async () => {
     const catcher = catchError(() => of(1));
     const caught = catcher(throwError(new Error("Boo")));

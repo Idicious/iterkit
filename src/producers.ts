@@ -4,7 +4,7 @@ export function of<T>(...values: T[]): GenFn<T> {
   return () => values;
 }
 
-export function from<T>(it: Iterable<T>): GenFn<T> {
+export function from<T>(it: Iterable<T> | AsyncIterable<T>): GenFn<T> {
   return () => it;
 }
 
