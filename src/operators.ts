@@ -7,7 +7,7 @@ import { sleep } from "./utils.js";
  *
  * @example
  * ```ts @import.meta.vitest
- * const { of } = await import("./producers");
+ * const { of } = await import("iterkit");
  *
  * const source = of(1, 2, 3);
  * const double = map((x) => x * 2);
@@ -36,7 +36,7 @@ export const map = <T, U, TArgs extends unknown[]>(
  *
  * @example
  * ```ts @import.meta.vitest
- * const { of } = await import("./producers");
+ * const { of } = await import("iterkit");
  *
  * const source = of(1, 2, 3);
  * const ident = identity();
@@ -56,7 +56,7 @@ export const identity =
  *
  * @example
  * ```ts @import.meta.vitest
- * const { of } = await import("./producers");
+ * const { of } = await import("iterkit");
  *
  * const source = of(1, 2, 3);
  * const isOdd = filter((x) => x % 2 === 1);
@@ -87,7 +87,7 @@ export const filter = <T, TArgs extends unknown[]>(
  *
  * @example
  * ```ts @import.meta.vitest
- * const { of } = await import("./producers");
+ * const { of } = await import("iterkit");
  *
  * const source = of(1, 2, 3);
  * const takeTwo = take(2);
@@ -118,7 +118,7 @@ export const take = <T, TArgs extends unknown[]>(
  *
  * @example
  * ```ts @import.meta.vitest
- * const { of } = await import("./producers");
+ * const { of } = await import("iterkit");
  *
  * const source = of(1, 2, 3);
  * const skipOne = skip(1);
@@ -149,7 +149,7 @@ export const skip = <T, TArgs extends unknown[]>(
  *
  * @example
  * ```ts @import.meta.vitest
- * const { of } = await import("./producers");
+ * const { of } = await import("iterkit");
  *
  * const source = of(1, 2, 3);
  * const delay10Ms = delay(10);
