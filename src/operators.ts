@@ -185,6 +185,23 @@ export const concatMap = <T, U, TArgs extends unknown[]>(
   };
 };
 
+/**
+ * Catches errors from the source generator and switches to a backup generator.
+ *
+ * @example
+ * ```ts @import.meta.vitest
+ * const { of, throwError, catchError } = await import("iterkit");
+ *
+ * const source = throwError(new Error("Oops"));
+ * const catcher = catchError(() => of(1, 2, 3));
+ *
+ * const result = await Array.fromAsync(catcher(source)());
+ * expect(result).toEqual([1, 2, 3]);
+ * ```
+ *
+ * @param onError Function that returns a backup generator when an error occurs.
+ * @returns
+ */
 export const catchError = <T, TArgs extends unknown[]>(
   onError: (error: unknown, ...args: TArgs) => GenFn<T, TArgs>
 ): Operator<T, T, TArgs> => {
@@ -204,6 +221,23 @@ export const catchError = <T, TArgs extends unknown[]>(
   };
 };
 
+/**
+ * Catches errors from the source generator and returns a default value.
+ *
+ * @example
+ * ```ts @import.meta.vitest
+ * const { of, throwError, catchErrorDefault } = await import("iterkit");
+ *
+ * const source = throwError(new Error("Oops"));
+ * const catcher = catchErrorDefault(() => 42);
+ *
+ * const result = await Array.fromAsync(catcher(source)());
+ * expect(result).toEqual([42]);
+ * ```
+ *
+ * @param defaultValue
+ * @returns
+ */
 export const catchErrorDefault = <T, TArgs extends unknown[]>(
   defaultValue: (error: unknown, ...args: TArgs) => T
 ) => {
