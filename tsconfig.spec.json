@@ -2,7 +2,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "strict": false,
-    "noUnusedLocals": false
+    "noUnusedLocals": false,
+    "paths": {
+      "iterkit": ["src/index.js"]
+    }
   },
   "include": ["src/**/*.ts"]
 }

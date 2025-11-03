@@ -2,8 +2,25 @@ import { of } from "./producers.js";
 import type { GenFn, Operator } from "./types.js";
 import { sleep } from "./utils.js";
 
+/**
+ * Maps each item emitted by the source generator using the provided function.
+ *
+ * @example
+ * ```ts @import.meta.vitest
+ * const { of } = await import("./producers");
+ *
+ * const source = of(1, 2, 3);
+ * const double = map((x) => x * 2);
+ *
+ * const result = await Array.fromAsync(double(source)());
+ * expect(result).toEqual([2, 4, 6]);
+ * ```
+ *
+ * @param fn The mapping function to apply to each item.
+ * @returns An operator function that applies the mapping function to each item.
+ */
 export const map = <T, U, TArgs extends unknown[]>(
-  fn: (item: T, ...args: TArgs) => U
+  fn: (item: T, ...args: TArgs) => U | Promise<U>
 ): Operator<T, Awaited<U>, TArgs> => {
   return (source) => {
     return async function* (...args: TArgs) {
@@ -14,11 +31,43 @@ export const map = <T, U, TArgs extends unknown[]>(
   };
 };
 
+/**
+ * Returns the source generator
+ *
+ * @example
+ * ```ts @import.meta.vitest
+ * const { of } = await import("./producers");
+ *
+ * const source = of(1, 2, 3);
+ * const ident = identity();
+ *
+ * const result = await Array.fromAsync(ident(source)());
+ * expect(result).toEqual([1, 2, 3]);
+ * ```
+ * @returns Source generator
+ */
 export const identity =
   <T, TArgs extends unknown[] = []>(): Operator<T, T, TArgs> =>
   (source) =>
     source;
 
+/**
+ * Filters each item emitted by the source generator using the provided function.
+ *
+ * @example
+ * ```ts @import.meta.vitest
+ * const { of } = await import("./producers");
+ *
+ * const source = of(1, 2, 3);
+ * const isOdd = filter((x) => x % 2 === 1);
+ *
+ * const result = await Array.fromAsync(isOdd(source)());
+ * expect(result).toEqual([1, 3]);
+ * ```
+ *
+ * @param fn The filter function to apply to each item.
+ * @returns An operator function that applies the filter function to each item.
+ */
 export const filter = <T, TArgs extends unknown[]>(
   predicate: (item: T, ...args: TArgs) => boolean | Promise<boolean>
 ): Operator<T, T, TArgs> => {
@@ -33,34 +82,85 @@ export const filter = <T, TArgs extends unknown[]>(
   };
 };
 
+/**
+ * Takes the first n items from source generator
+ *
+ * @example
+ * ```ts @import.meta.vitest
+ * const { of } = await import("./producers");
+ *
+ * const source = of(1, 2, 3);
+ * const takeTwo = take(2);
+ *
+ * const result = await Array.fromAsync(takeTwo(source)());
+ * expect(result).toEqual([1, 2]);
+ * ```
+ *
+ * @param n Number of items to take.
+ * @returns An operator function that takes the first n items.
+ */
 export const take = <T, TArgs extends unknown[]>(
-  count: number
+  n: number
 ): Operator<T, T, TArgs> => {
   return (source) => {
     return async function* (...args: TArgs) {
       let taken = 0;
       for await (const item of source(...args)) {
-        if (taken++ >= count) break;
+        if (taken++ >= n) break;
         yield item;
       }
     };
   };
 };
 
+/**
+ * Skip the first n items from source generator
+ *
+ * @example
+ * ```ts @import.meta.vitest
+ * const { of } = await import("./producers");
+ *
+ * const source = of(1, 2, 3);
+ * const skipOne = skip(1);
+ *
+ * const result = await Array.fromAsync(skipOne(source)());
+ * expect(result).toEqual([2, 3]);
+ * ```
+ *
+ * @param n Number of items to take.
+ * @returns An operator function that takes the first n items.
+ */
 export const skip = <T, TArgs extends unknown[]>(
-  count: number
+  n: number
 ): Operator<T, T, TArgs> => {
   return (source) => {
     return async function* (...args: TArgs) {
       let skipped = 0;
       for await (const item of source(...args)) {
-        if (skipped++ < count) continue;
+        if (skipped++ < n) continue;
         yield item;
       }
     };
   };
 };
 
+/**
+ * Delay emission of each item by ms
+ *
+ * @example
+ * ```ts @import.meta.vitest
+ * const { of } = await import("./producers");
+ *
+ * const source = of(1, 2, 3);
+ * const delay10Ms = delay(10);
+ *
+ * const result = await Array.fromAsync(delay10Ms(source)());
+ * expect(result).toEqual([1, 2, 3]);
+ * ```
+ *
+ * @param n Number of items to take.
+ * @returns An operator function that takes the first n items.
+ */
 export const delay = <T, TArgs extends unknown[]>(
   ms: number
 ): Operator<T, T, TArgs> => {
