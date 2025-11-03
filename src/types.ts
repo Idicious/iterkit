@@ -1,15 +1,7 @@
-export type SyncGenFn<T, TArgs extends unknown[] = []> = (
+export type GenFn<T, TArgs extends unknown[] = []> = (
   ...args: TArgs
-) => Iterable<T>;
+) => Iterable<T> | AsyncIterable<T>;
 
-export type AsyncGenFn<T, TArgs extends unknown[] = []> = (
-  ...args: TArgs
-) => AsyncIterable<T>;
-
-export type GenFn<T, TArgs extends unknown[] = []> =
-  | SyncGenFn<T, TArgs>
-  | AsyncGenFn<T, TArgs>;
-
-export type Operator<TInput, TOutput, TArgs extends unknown[] = []> = (
-  source: GenFn<TInput, any[]>
-) => GenFn<TOutput, TArgs>;
+export type Operator<TIn, TOut, TArgs extends unknown[] = []> = (
+  source: GenFn<TIn, any[]>
+) => GenFn<TOut, TArgs>;
