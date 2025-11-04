@@ -173,13 +173,29 @@ export const delay = <T, TArgs extends unknown[]>(
     };
 };
 
+/**
+ * Maps each item emitted by the source generator to an inner generator and flattens the results.
+ *
+ * @example
+ * ```ts @import.meta.vitest
+ * const { of, concatMap } = await import("iterkit");
+ *
+ * const source = of(1, 2);
+ * const expand = concatMap((x: number) => of(1 * x, 2 * x, 3 * x));
+ *
+ * const result = await Array.fromAsync(expand(source)());
+ * expect(result).toEqual([1, 2, 3, 2, 4, 6]);
+ * ```
+ * @param fn The function that maps each item to an inner generator.
+ * @returns
+ */
 export const concatMap = <T, U, TArgs extends unknown[]>(
-  fn: (item: T, ...args: TArgs) => AsyncIterable<U> | Iterable<U>
+  fn: (item: T, ...args: TArgs) => GenFn<U, TArgs>
 ): Operator<T, U, TArgs> => {
   return (source) => {
     return async function* (...args: TArgs) {
       for await (const item of source(...args)) {
-        yield* fn(item, ...args);
+        yield* fn(item, ...args)(...args);
       }
     };
   };
@@ -246,6 +262,29 @@ export const catchErrorDefault = <T, TArgs extends unknown[]>(
   );
 };
 
+/**
+ * Catches errors from the source generator and retries up to maxRetries times with an optional delay.
+ *
+ * @example
+ * ```ts @import.meta.vitest
+ * const { retry } = await import("iterkit");
+ *
+ * let attempt = 0;
+ * const source = function* () {
+ *   if (attempt++ < 2) {
+ *     throw Error("Temporary failure");
+ *   }
+ *   yield 1;
+ * }
+
+ * const result = await Array.fromAsync(retry(2)(source)());
+ * expect(result).toEqual([1]);
+ * ```
+ *
+ * @param maxRetries
+ * @param delayMs
+ * @returns
+ */
 export const retry =
   <T, TArgs extends unknown[]>(
     maxRetries = 1,

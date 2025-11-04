@@ -38,10 +38,10 @@ describe("operators", () => {
   });
 
   test("concatMap", async () => {
-    const stream = concatMap((x: number) => [1 * x, 2 * x, 3 * x]);
-    const concatenated = stream(from([1, 2]));
+    const source = of(1, 2);
+    const expand = concatMap((x: number) => of(1 * x, 2 * x, 3 * x));
 
-    const result = await Array.fromAsync(concatenated());
+    const result = await Array.fromAsync(expand(source)());
     expect(result).toEqual([1, 2, 3, 2, 4, 6]);
   });
 });
