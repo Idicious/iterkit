@@ -44,7 +44,7 @@ export const map = <T, U, TArgs extends unknown[]>(
  * const result = await Array.fromAsync(ident(source)());
  * expect(result).toEqual([1, 2, 3]);
  * ```
- * @returns Source generator
+ * @returns An operator function that returns the source generator.
  */
 export const identity =
   <T, TArgs extends unknown[] = []>(): Operator<T, T, TArgs> =>
@@ -187,7 +187,7 @@ export const delay = <T, TArgs extends unknown[]>(
  * expect(result).toEqual([1, 2, 3, 2, 4, 6]);
  * ```
  * @param fn The function that maps each item to an inner generator.
- * @returns
+ * @returns An operator function that flattens the inner generators.
  */
 export const concatMap = <T, U, TArgs extends unknown[]>(
   fn: (item: T, ...args: TArgs) => GenFn<U, TArgs>
@@ -216,7 +216,7 @@ export const concatMap = <T, U, TArgs extends unknown[]>(
  * ```
  *
  * @param onError Function that returns a backup generator when an error occurs.
- * @returns
+ * @returns An operator function that catches errors and switches to the backup generator.
  */
 export const catchError = <T, TArgs extends unknown[]>(
   onError: (error: unknown, ...args: TArgs) => GenFn<T, TArgs>
@@ -252,7 +252,7 @@ export const catchError = <T, TArgs extends unknown[]>(
  * ```
  *
  * @param defaultValue
- * @returns
+ * @returns An operator function that catches errors and returns a default value.
  */
 export const catchErrorDefault = <T, TArgs extends unknown[]>(
   defaultValue: (error: unknown, ...args: TArgs) => T
@@ -283,7 +283,7 @@ export const catchErrorDefault = <T, TArgs extends unknown[]>(
  *
  * @param maxRetries
  * @param delayMs
- * @returns
+ * @returns An operator function that retries the source generator on error.
  */
 export const retry =
   <T, TArgs extends unknown[]>(
@@ -311,11 +311,11 @@ export const retry =
  * const { of, withCancellation, delay } = await import("iterkit");
  *
  * const source = of(1, 2, 3, 4, 5);
- * const delayed = delay(4)(source);
+ * const delayed = delay(10)(source);
  * const cancellable = withCancellation(delayed);
  *
  * const controller = new AbortController();
- * setTimeout(() => controller.abort(), 15); // Cancel after 15ms
+ * setTimeout(() => controller.abort(), 35); // Cancel after 35ms
  *
  * const result = await Array.fromAsync(cancellable(controller.signal)());
  *
@@ -323,7 +323,7 @@ export const retry =
  * ```
  *
  * @param source
- * @returns
+ * @returns A function that takes an AbortSignal and returns a cancellable generator.
  */
 export const withCancellation = <T, TArgs extends unknown[]>(
   source: GenFn<T, TArgs>
