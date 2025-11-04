@@ -9,6 +9,7 @@ export default defineConfig({
   },
   test: {
     includeSource: ["./src/**/*.ts", "**/*.md"],
+    setupFiles: "./vitest.setup.mjs",
   },
   resolve: {
     alias: {

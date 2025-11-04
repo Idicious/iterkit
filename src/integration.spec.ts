@@ -1,15 +1,10 @@
 import nock from "nock";
-import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 import { pipe } from "./pipe.js";
 import { map, skip, take, identity } from "./operators.js";
 import { from } from "./producers.js";
 
 describe("integration:fetch", () => {
-  beforeAll(() => nock.disableNetConnect());
-  afterAll(() => nock.enableNetConnect());
-
-  afterEach(() => nock.cleanAll());
-
   test("should map fetch responses to JSON", async () => {
     const baseUrl = "http://localhost";
     const accountId = "account-id";
