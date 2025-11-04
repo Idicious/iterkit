@@ -303,6 +303,28 @@ export const retry =
       }
     };
 
+/**
+ * Adds cancellation support to the source generator.
+ *
+ * @example
+ * ```ts @import.meta.vitest
+ * const { of, withCancellation, delay } = await import("iterkit");
+ *
+ * const source = of(1, 2, 3, 4, 5);
+ * const delayed = delay(4)(source);
+ * const cancellable = withCancellation(delayed);
+ *
+ * const controller = new AbortController();
+ * setTimeout(() => controller.abort(), 15); // Cancel after 15ms
+ *
+ * const result = await Array.fromAsync(cancellable(controller.signal)());
+ *
+ * expect(result).toEqual([1, 2, 3]);
+ * ```
+ *
+ * @param source
+ * @returns
+ */
 export const withCancellation = <T, TArgs extends unknown[]>(
   source: GenFn<T, TArgs>
 ): ((signal: AbortSignal) => GenFn<T, TArgs>) => {
