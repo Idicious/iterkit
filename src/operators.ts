@@ -181,7 +181,7 @@ export const delay = <T, TArgs extends unknown[]>(
  * const { of, concatMap } = await import("iterkit");
  *
  * const source = of(1, 2);
- * const expand = concatMap((x: number) => of(1 * x, 2 * x, 3 * x));
+ * const expand = concatMap((x) => of(1 * x, 2 * x, 3 * x));
  *
  * const result = await Array.fromAsync(expand(source)());
  * expect(result).toEqual([1, 2, 3, 2, 4, 6]);
