@@ -19,7 +19,7 @@ import { sleep } from "./utils.js";
  * @param fn The mapping function to apply to each item.
  * @returns An operator function that applies the mapping function to each item.
  */
-export const map = <T, U, TArgs extends unknown[]>(
+export const map = <T, U, TArgs extends unknown[] = []>(
   fn: (item: T, ...args: TArgs) => U | Promise<U>
 ): Operator<T, Awaited<U>, TArgs> => {
   return (source) => {
@@ -68,7 +68,7 @@ export const identity =
  * @param fn The filter function to apply to each item.
  * @returns An operator function that applies the filter function to each item.
  */
-export const filter = <T, TArgs extends unknown[]>(
+export const filter = <T, TArgs extends unknown[] = []>(
   predicate: (item: T, ...args: TArgs) => boolean | Promise<boolean>
 ): Operator<T, T, TArgs> => {
   return (source) => {
@@ -99,7 +99,7 @@ export const filter = <T, TArgs extends unknown[]>(
  * @param n Number of items to take.
  * @returns An operator function that takes the first n items.
  */
-export const take = <T, TArgs extends unknown[]>(
+export const take = <T, TArgs extends unknown[] = []>(
   n: number
 ): Operator<T, T, TArgs> => {
   return (source) => {
@@ -130,7 +130,7 @@ export const take = <T, TArgs extends unknown[]>(
  * @param n Number of items to take.
  * @returns An operator function that takes the first n items.
  */
-export const skip = <T, TArgs extends unknown[]>(
+export const skip = <T, TArgs extends unknown[] = []>(
   n: number
 ): Operator<T, T, TArgs> => {
   return (source) => {
@@ -161,7 +161,7 @@ export const skip = <T, TArgs extends unknown[]>(
  * @param ms Number of milliseconds to delay each item.
  * @returns An operator function that delays the emission of each item by the specified milliseconds.
  */
-export const delay = <T, TArgs extends unknown[]>(
+export const delay = <T, TArgs extends unknown[] = []>(
   ms: number
 ): Operator<T, T, TArgs> => {
   return (source) =>
@@ -189,7 +189,7 @@ export const delay = <T, TArgs extends unknown[]>(
  * @param fn The function that maps each item to an inner generator.
  * @returns An operator function that flattens the inner generators.
  */
-export const concatMap = <T, U, TArgs extends unknown[]>(
+export const concatMap = <T, U, TArgs extends unknown[] = []>(
   fn: (item: T, ...args: TArgs) => GenFn<U, TArgs>
 ): Operator<T, U, TArgs> => {
   return (source) => {
@@ -218,7 +218,7 @@ export const concatMap = <T, U, TArgs extends unknown[]>(
  * @param onError Function that returns a backup generator when an error occurs.
  * @returns An operator function that catches errors and switches to the backup generator.
  */
-export const catchError = <T, TArgs extends unknown[]>(
+export const catchError = <T, TArgs extends unknown[] = []>(
   onError: (error: unknown, ...args: TArgs) => GenFn<T, TArgs>
 ): Operator<T, T, TArgs> => {
   return (source) => {
@@ -254,7 +254,7 @@ export const catchError = <T, TArgs extends unknown[]>(
  * @param defaultValue
  * @returns An operator function that catches errors and returns a default value.
  */
-export const catchErrorDefault = <T, TArgs extends unknown[]>(
+export const catchErrorDefault = <T, TArgs extends unknown[] = []>(
   defaultValue: (error: unknown, ...args: TArgs) => T
 ) => {
   return catchError((error, ...args: TArgs) =>
@@ -286,7 +286,7 @@ export const catchErrorDefault = <T, TArgs extends unknown[]>(
  * @returns An operator function that retries the source generator on error.
  */
 export const retry =
-  <T, TArgs extends unknown[]>(
+  <T, TArgs extends unknown[] = []>(
     maxRetries = 1,
     delayMs = 0
   ): Operator<T, T, TArgs> =>
@@ -325,7 +325,7 @@ export const retry =
  * @param source
  * @returns A function that takes an AbortSignal and returns a cancellable generator.
  */
-export const withCancellation = <T, TArgs extends unknown[]>(
+export const withCancellation = <T, TArgs extends unknown[] = []>(
   source: GenFn<T, TArgs>
 ): ((signal: AbortSignal) => GenFn<T, TArgs>) => {
   return (signal: AbortSignal) => {
