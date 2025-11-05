@@ -23,7 +23,9 @@ type Active<T> = {
   pending: Promise<IteratorResult<T>>;
 };
 
-export function merge<T>(...gens: GenFn<T>[]): GenFn<T> {
+export function merge<const T extends readonly GenFn<any>[]>(
+  ...gens: T
+): GenFn<T extends readonly GenFn<infer U>[] ? Awaited<U> : never> {
   return async function* () {
     const iterators = gens
       .map((gen) => gen())
@@ -33,7 +35,7 @@ export function merge<T>(...gens: GenFn<T>[]): GenFn<T> {
           : it[Symbol.iterator]()
       );
 
-    const actives = iterators.map<Active<T>>((iterator) => ({
+    const actives = iterators.map<Active<any>>((iterator) => ({
       iterator,
       pending: Promise.resolve(iterator.next()),
     }));

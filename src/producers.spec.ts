@@ -16,8 +16,8 @@ describe("producers", () => {
     });
 
     it("should merge correctly with delays", async () => {
-      const source1 = delay(10)(of("a", "b", "c"));
-      const source2 = delay(5)(of(1, 2, 3));
+      const source1 = delay<string>(10)(of("a", "b", "c"));
+      const source2 = delay<number>(5)(of(1, 2, 3));
       const merged = merge(source1, source2);
 
       const resultP = Array.fromAsync(merged());
