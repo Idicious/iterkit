@@ -18,24 +18,19 @@ export function throwError(err: unknown): GenFn<never> {
   return fromPromise(Promise.reject(err));
 }
 
-type Active<T> = {
-  iterator: Iterator<T> | AsyncIterator<T>;
-  pending: Promise<IteratorResult<T>>;
-};
-
 export function merge<const T extends readonly GenFn<any>[]>(
-  ...gens: T
+  ...generators: T
 ): GenFn<T extends readonly GenFn<infer U>[] ? Awaited<U> : never> {
   return async function* () {
-    const iterators = gens
-      .map((gen) => gen())
-      .map((it) =>
-        Symbol.asyncIterator in it
-          ? it[Symbol.asyncIterator]()
-          : it[Symbol.iterator]()
-      );
+    const iterators = generators.map((generator) => {
+      const iterable = generator();
 
-    const actives = iterators.map<Active<any>>((iterator) => ({
+      return Symbol.asyncIterator in iterable
+        ? iterable[Symbol.asyncIterator]()
+        : iterable[Symbol.iterator]();
+    });
+
+    const actives = iterators.map((iterator) => ({
       iterator,
       pending: Promise.resolve(iterator.next()),
     }));
