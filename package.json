@@ -6,6 +6,7 @@
   "scripts": {
     "test": "vitest",
     "build": "rollup -c",
+    "build:docs": "typedoc",
     "prepublishOnly": "npm run build"
   },
   "author": "David Sherman",
@@ -26,6 +27,8 @@
     "nock": "^14.0.10",
     "rollup": "^4.52.5",
     "tslib": "^2.8.1",
+    "typedoc": "^0.28.14",
+    "typedoc-plugin-markdown": "^4.9.0",
     "typescript": "^5.9.3",
     "vite-plugin-doctest": "^1.1.1",
     "vitest": "^4.0.5"
