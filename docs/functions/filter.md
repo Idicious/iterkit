@@ -8,7 +8,7 @@
 
 > **filter**\<`T`, `TArgs`\>(`predicate`): [`Operator`](../type-aliases/Operator.md)\<`T`, `T`, `TArgs`\>
 
-Defined in: [operators.ts:71](https://github.com/Idicious/iterkit/blob/f2299673644b8ee39ca26572a463fe6cf0ddbfba/src/operators.ts#L71)
+Defined in: [operators.ts:71](https://github.com/Idicious/iterkit/blob/beefb03138960e7ad33cf0e7c7b803de00a0bd5b/src/operators.ts#L71)
 
 Filters each item emitted by the source generator using the provided function.
 
@@ -27,6 +27,8 @@ Filters each item emitted by the source generator using the provided function.
 ### predicate
 
 (`item`, ...`args`) => `boolean` \| `Promise`\<`boolean`\>
+
+The filter function to apply to each item.
 
 ## Returns
 

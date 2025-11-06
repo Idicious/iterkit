@@ -6,9 +6,9 @@
 
 # Function: concatMap()
 
-> **concatMap**\<`T`, `U`, `TArgs`\>(`fn`): [`Operator`](../type-aliases/Operator.md)\<`T`, `U`, `TArgs`\>
+> **concatMap**\<`T`, `U`, `TArgs`\>(`mapper`): [`Operator`](../type-aliases/Operator.md)\<`T`, `U`, `TArgs`\>
 
-Defined in: [operators.ts:192](https://github.com/Idicious/iterkit/blob/f2299673644b8ee39ca26572a463fe6cf0ddbfba/src/operators.ts#L192)
+Defined in: [operators.ts:192](https://github.com/Idicious/iterkit/blob/beefb03138960e7ad33cf0e7c7b803de00a0bd5b/src/operators.ts#L192)
 
 Maps each item emitted by the source generator to an inner generator and flattens the results.
 
@@ -28,7 +28,7 @@ Maps each item emitted by the source generator to an inner generator and flatten
 
 ## Parameters
 
-### fn
+### mapper
 
 (`item`, ...`args`) => [`GenFn`](../type-aliases/GenFn.md)\<`U`, `TArgs`\>
 

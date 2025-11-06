@@ -2,6 +2,8 @@
   "entryPoints": ["src/index.ts"],
   "out": "docs",
   "plugin": ["typedoc-plugin-markdown"],
+  "darkHighlightTheme": "github-dark",
+  "lightHighlightTheme": "github-light",
   "readme": "README.md",
   "excludeInternal": true,
   "excludePrivate": true,

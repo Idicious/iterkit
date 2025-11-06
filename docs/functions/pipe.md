@@ -10,7 +10,7 @@
 
 > **pipe**\<`A`, `TArgs`\>(): [`Operator`](../type-aliases/Operator.md)\<`A`, `A`, `TArgs`\>
 
-Defined in: [pipe.ts:21](https://github.com/Idicious/iterkit/blob/f2299673644b8ee39ca26572a463fe6cf0ddbfba/src/pipe.ts#L21)
+Defined in: [pipe.ts:21](https://github.com/Idicious/iterkit/blob/beefb03138960e7ad33cf0e7c7b803de00a0bd5b/src/pipe.ts#L21)
 
 Composes multiple operators into a single operator.
 
@@ -48,7 +48,7 @@ expect(result).toEqual([6, 8]);
 
 > **pipe**\<`A`, `R`, `TArgs`\>(`operator1`): [`Operator`](../type-aliases/Operator.md)\<`A`, `R`, `TArgs`\>
 
-Defined in: [pipe.ts:22](https://github.com/Idicious/iterkit/blob/f2299673644b8ee39ca26572a463fe6cf0ddbfba/src/pipe.ts#L22)
+Defined in: [pipe.ts:22](https://github.com/Idicious/iterkit/blob/beefb03138960e7ad33cf0e7c7b803de00a0bd5b/src/pipe.ts#L22)
 
 Composes multiple operators into a single operator.
 
@@ -96,7 +96,7 @@ expect(result).toEqual([6, 8]);
 
 > **pipe**\<`A`, `B`, `R`, `TArgs`\>(`operator1`, `operator2`): [`Operator`](../type-aliases/Operator.md)\<`A`, `R`, `TArgs`\>
 
-Defined in: [pipe.ts:25](https://github.com/Idicious/iterkit/blob/f2299673644b8ee39ca26572a463fe6cf0ddbfba/src/pipe.ts#L25)
+Defined in: [pipe.ts:25](https://github.com/Idicious/iterkit/blob/beefb03138960e7ad33cf0e7c7b803de00a0bd5b/src/pipe.ts#L25)
 
 Composes multiple operators into a single operator.
 
@@ -152,7 +152,7 @@ expect(result).toEqual([6, 8]);
 
 > **pipe**\<`A`, `B`, `C`, `R`, `TArgs`\>(`operator1`, `operator2`, `operator3`): [`Operator`](../type-aliases/Operator.md)\<`A`, `R`, `TArgs`\>
 
-Defined in: [pipe.ts:29](https://github.com/Idicious/iterkit/blob/f2299673644b8ee39ca26572a463fe6cf0ddbfba/src/pipe.ts#L29)
+Defined in: [pipe.ts:29](https://github.com/Idicious/iterkit/blob/beefb03138960e7ad33cf0e7c7b803de00a0bd5b/src/pipe.ts#L29)
 
 Composes multiple operators into a single operator.
 
@@ -216,7 +216,7 @@ expect(result).toEqual([6, 8]);
 
 > **pipe**\<`A`, `B`, `C`, `D`, `R`, `TArgs`\>(`operator1`, `operator2`, `operator3`, `operator4`): [`Operator`](../type-aliases/Operator.md)\<`A`, `R`, `TArgs`\>
 
-Defined in: [pipe.ts:34](https://github.com/Idicious/iterkit/blob/f2299673644b8ee39ca26572a463fe6cf0ddbfba/src/pipe.ts#L34)
+Defined in: [pipe.ts:34](https://github.com/Idicious/iterkit/blob/beefb03138960e7ad33cf0e7c7b803de00a0bd5b/src/pipe.ts#L34)
 
 Composes multiple operators into a single operator.
 
@@ -288,7 +288,7 @@ expect(result).toEqual([6, 8]);
 
 > **pipe**\<`A`, `B`, `C`, `D`, `E`, `R`, `TArgs`\>(`operator1`, `operator2`, `operator3`, `operator4`, `operator5`): [`Operator`](../type-aliases/Operator.md)\<`A`, `R`, `TArgs`\>
 
-Defined in: [pipe.ts:40](https://github.com/Idicious/iterkit/blob/f2299673644b8ee39ca26572a463fe6cf0ddbfba/src/pipe.ts#L40)
+Defined in: [pipe.ts:40](https://github.com/Idicious/iterkit/blob/beefb03138960e7ad33cf0e7c7b803de00a0bd5b/src/pipe.ts#L40)
 
 Composes multiple operators into a single operator.
 

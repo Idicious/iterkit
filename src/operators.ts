@@ -16,16 +16,16 @@ import { sleep } from "./utils.js";
  * expect(result).toEqual([2, 4, 6]);
  * ```
  *
- * @param fn The mapping function to apply to each item.
+ * @param mapper The mapping function to apply to each item.
  * @returns An operator function that applies the mapping function to each item.
  */
 export const map = <T, U, TArgs extends unknown[] = []>(
-  fn: (item: T, ...args: TArgs) => U | Promise<U>
+  mapper: (item: T, ...args: TArgs) => U | Promise<U>
 ): Operator<T, Awaited<U>, TArgs> => {
   return (source) => {
     return async function* (...args: TArgs) {
       for await (const item of source(...args)) {
-        yield await fn(item, ...args);
+        yield await mapper(item, ...args);
       }
     };
   };
@@ -65,7 +65,7 @@ export const identity =
  * expect(result).toEqual([1, 3]);
  * ```
  *
- * @param fn The filter function to apply to each item.
+ * @param predicate The filter function to apply to each item.
  * @returns An operator function that applies the filter function to each item.
  */
 export const filter = <T, TArgs extends unknown[] = []>(
@@ -186,16 +186,16 @@ export const delay = <T, TArgs extends unknown[] = []>(
  * const result = await Array.fromAsync(expand(source)());
  * expect(result).toEqual([1, 2, 3, 2, 4, 6]);
  * ```
- * @param fn The function that maps each item to an inner generator.
+ * @param mapper The function that maps each item to an inner generator.
  * @returns An operator function that flattens the inner generators.
  */
 export const concatMap = <T, U, TArgs extends unknown[] = []>(
-  fn: (item: T, ...args: TArgs) => GenFn<U, TArgs>
+  mapper: (item: T, ...args: TArgs) => GenFn<U, TArgs>
 ): Operator<T, U, TArgs> => {
   return (source) => {
     return async function* (...args: TArgs) {
       for await (const item of source(...args)) {
-        yield* fn(item, ...args)(...args);
+        yield* mapper(item, ...args)(...args);
       }
     };
   };

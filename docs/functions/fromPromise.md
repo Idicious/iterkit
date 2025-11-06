@@ -8,7 +8,7 @@
 
 > **fromPromise**\<`T`\>(`it`): [`GenFn`](../type-aliases/GenFn.md)\<`T`\>
 
-Defined in: [producers.ts:80](https://github.com/Idicious/iterkit/blob/f2299673644b8ee39ca26572a463fe6cf0ddbfba/src/producers.ts#L80)
+Defined in: [producers.ts:80](https://github.com/Idicious/iterkit/blob/beefb03138960e7ad33cf0e7c7b803de00a0bd5b/src/producers.ts#L80)
 
 Creates an async generator function from a promise.
 

@@ -8,7 +8,7 @@
 
 > **take**\<`T`, `TArgs`\>(`n`): [`Operator`](../type-aliases/Operator.md)\<`T`, `T`, `TArgs`\>
 
-Defined in: [operators.ts:102](https://github.com/Idicious/iterkit/blob/f2299673644b8ee39ca26572a463fe6cf0ddbfba/src/operators.ts#L102)
+Defined in: [operators.ts:102](https://github.com/Idicious/iterkit/blob/beefb03138960e7ad33cf0e7c7b803de00a0bd5b/src/operators.ts#L102)
 
 Takes the first n items from source generator
 
