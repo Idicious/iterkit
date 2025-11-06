@@ -308,18 +308,26 @@ export const retry =
  *
  * @example
  * ```ts @import.meta.vitest
- * const { of, withCancellation, delay } = await import("iterkit");
+ * const { of, delay, withCancellation } = await import("iterkit");
  *
- * const source = of(1, 2, 3, 4, 5);
- * const delayed = delay(10)(source);
- * const cancellable = withCancellation(delayed);
+ * // A delayed source emitting 1..5
+ * const source = delay(5)(of(1, 2, 3, 4, 5));
+ * const cancellable = withCancellation(source);
  *
  * const controller = new AbortController();
- * setTimeout(() => controller.abort(), 35); // Cancel after 35ms
+ * const signal = controller.signal;
  *
- * const result = await Array.fromAsync(cancellable(controller.signal)());
+ * const results: number[] = [];
+ * const iterator = cancellable(signal)();
  *
- * expect(result).toEqual([1, 2, 3]);
+ * for await (const value of iterator) {
+ *   results.push(value);
+ *   if (value === 3) {
+ *     controller.abort();
+ *   }
+ * }
+ *
+ * expect(results).toEqual([1, 2, 3]);
  * ```
  *
  * @param source
