@@ -93,7 +93,7 @@ export function fromPromise<T>(it: Promise<T>): GenFn<T> {
  * const source = throwError(new Error("Test error"));
  * const resultP = Array.fromAsync(source());
  *
- * expect(resultP).rejects.toThrow("Test error");
+ * await expect(resultP).rejects.toThrow("Test error");
  * ```
  *
  * @param err The error to throw.
