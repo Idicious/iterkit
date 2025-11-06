@@ -7,7 +7,8 @@
     "test": "vitest",
     "build": "rollup -c",
     "build:docs": "typedoc",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "postinstall": "patch-package"
   },
   "author": "David Sherman",
   "repository": {
@@ -25,12 +26,13 @@
     "@rollup/plugin-typescript": "^12.3.0",
     "@types/node": "^24.9.2",
     "nock": "^14.0.10",
+    "patch-package": "^8.0.1",
     "rollup": "^4.52.5",
     "tslib": "^2.8.1",
     "typedoc": "^0.28.14",
     "typedoc-plugin-markdown": "^4.9.0",
     "typescript": "^5.9.3",
-    "vite-plugin-doctest": "^1.1.1",
+    "vite-plugin-doctest": "1.1.1",
     "vitest": "^4.0.5"
   },
   "keywords": [
