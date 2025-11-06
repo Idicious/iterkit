@@ -1,0 +1,13 @@
+diff --git a/node_modules/vite-plugin-doctest/dist/index.js b/node_modules/vite-plugin-doctest/dist/index.js
+index e14383c..a4b1ee1 100644
+--- a/node_modules/vite-plugin-doctest/dist/index.js
++++ b/node_modules/vite-plugin-doctest/dist/index.js
+@@ -9527,7 +9527,7 @@ function extractCode(md) {
+     const matched2 = suggestion.match(/```(.+?)\n(.+?)\n```/s) ?? [];
+     const [, lang, code] = matched2;
+     if (!code) throw new Error("Unexpected blank code block");
+-    if (lang == null || !lang.includes("@import.meta.vitest")) return [];
++    if (lang == null) return [];
+     const name = lang.split(":", 2)[1]?.trim();
+     return { name, code };
+   });

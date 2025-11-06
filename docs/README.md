@@ -31,7 +31,7 @@ npm install iterkit
 
 ### Quick Example
 
-```ts @import.meta.vitest
+```ts
 const { of, pipe, map, filter } = await import("iterkit");
 
 const numbers = of(1, 2, 3, 4, 5);
@@ -53,7 +53,7 @@ expect(result).toEqual([4, 8]);
 
 A `GenFn` is a function that returns an `Iterable` or `AsyncIterable`:
 
-```ts @import.meta.vitest
+```ts
 type GenFn<T, TArgs extends unknown[]> = (
   ...args: TArgs
 ) => Iterable<T> | AsyncIterable<T>;
@@ -63,7 +63,7 @@ type GenFn<T, TArgs extends unknown[]> = (
 
 An `Operator` transforms one generator function into another:
 
-```ts @import.meta.vitest
+```ts
 type Operator<TIn, TOut, TArgs extends unknown[]> = (
   source: GenFn<TIn, any[]>
 ) => GenFn<TOut, TArgs>;
@@ -75,7 +75,7 @@ Operators can be composed using `pipe`, which applies them left-to-right.
 
 The `pipe` function composes operators to form a reusable transformation:
 
-```ts @import.meta.vitest
+```ts
 const { of, pipe, map, filter } = await import("iterkit");
 
 const transform = pipe(
