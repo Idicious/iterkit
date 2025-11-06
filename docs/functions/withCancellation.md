@@ -8,7 +8,7 @@
 
 > **withCancellation**\<`T`, `TArgs`\>(`source`): (`signal`) => [`GenFn`](../type-aliases/GenFn.md)\<`T`, `TArgs`\>
 
-Defined in: [operators.ts:336](https://github.com/Idicious/iterkit/blob/beefb03138960e7ad33cf0e7c7b803de00a0bd5b/src/operators.ts#L336)
+Defined in: [operators.ts:336](https://github.com/Idicious/iterkit/blob/497a09e986aabb6cdcbc8ad040843aa8c353f93e/src/operators.ts#L336)
 
 Adds cancellation support to the source generator.
 
@@ -46,7 +46,7 @@ A function that takes an AbortSignal and returns a cancellable generator.
 
 ## Example
 
-```ts @import.meta.vitest
+```ts
 const { of, delay, withCancellation } = await import("iterkit");
 
 // A delayed source emitting 1..5

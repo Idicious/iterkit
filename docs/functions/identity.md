@@ -8,7 +8,7 @@
 
 > **identity**\<`T`, `TArgs`\>(): [`Operator`](../type-aliases/Operator.md)\<`T`, `T`, `TArgs`\>
 
-Defined in: [operators.ts:50](https://github.com/Idicious/iterkit/blob/beefb03138960e7ad33cf0e7c7b803de00a0bd5b/src/operators.ts#L50)
+Defined in: [operators.ts:50](https://github.com/Idicious/iterkit/blob/497a09e986aabb6cdcbc8ad040843aa8c353f93e/src/operators.ts#L50)
 
 Returns the source generator
 
@@ -30,7 +30,7 @@ An operator function that returns the source generator.
 
 ## Example
 
-```ts @import.meta.vitest
+```ts
 const { of, identity } = await import("iterkit");
 
 const source = of(1, 2, 3);

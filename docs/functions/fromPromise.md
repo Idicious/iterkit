@@ -8,7 +8,7 @@
 
 > **fromPromise**\<`T`\>(`it`): [`GenFn`](../type-aliases/GenFn.md)\<`T`\>
 
-Defined in: [producers.ts:80](https://github.com/Idicious/iterkit/blob/beefb03138960e7ad33cf0e7c7b803de00a0bd5b/src/producers.ts#L80)
+Defined in: [producers.ts:80](https://github.com/Idicious/iterkit/blob/497a09e986aabb6cdcbc8ad040843aa8c353f93e/src/producers.ts#L80)
 
 Creates an async generator function from a promise.
 
@@ -34,7 +34,7 @@ A generator function that yields the resolved value of the promise.
 
 ## Example
 
-```ts @import.meta.vitest
+```ts
 const { fromPromise } = await import("iterkit");
 
 const source = fromPromise(Promise.resolve(42));
