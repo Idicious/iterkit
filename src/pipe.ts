@@ -4,7 +4,7 @@ import type { Operator } from "./types.js";
  * Composes multiple operators into a single operator.
  *
  * @example
- * ```ts
+ * ```ts  @import.meta.vitest
  * const { of, pipe, map, filter } = await import("iterkit");
  *
  * const transform = pipe(

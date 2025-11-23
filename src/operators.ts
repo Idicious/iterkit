@@ -6,7 +6,7 @@ import { sleep } from "./utils.js";
  * Maps each item emitted by the source generator using the provided function.
  *
  * @example
- * ```ts
+ * ```ts  @import.meta.vitest
  * const { of, map } = await import("iterkit");
  *
  * const source = of(1, 2, 3);
@@ -35,7 +35,7 @@ export const map = <T, U, TArgs extends unknown[] = []>(
  * Returns the source generator
  *
  * @example
- * ```ts
+ * ```ts  @import.meta.vitest
  * const { of, identity } = await import("iterkit");
  *
  * const source = of(1, 2, 3);
@@ -55,7 +55,7 @@ export const identity =
  * Filters each item emitted by the source generator using the provided function.
  *
  * @example
- * ```ts
+ * ```ts  @import.meta.vitest
  * const { of, filter } = await import("iterkit");
  *
  * const source = of(1, 2, 3);
@@ -86,7 +86,7 @@ export const filter = <T, TArgs extends unknown[] = []>(
  * Takes the first n items from source generator
  *
  * @example
- * ```ts
+ * ```ts  @import.meta.vitest
  * const { of, take } = await import("iterkit");
  *
  * const source = of(1, 2, 3);
@@ -117,7 +117,7 @@ export const take = <T, TArgs extends unknown[] = []>(
  * Skip the first n items from source generator
  *
  * @example
- * ```ts
+ * ```ts  @import.meta.vitest
  * const { of, skip } = await import("iterkit");
  *
  * const source = of(1, 2, 3);
@@ -148,7 +148,7 @@ export const skip = <T, TArgs extends unknown[] = []>(
  * Delay emission of each item by ms
  *
  * @example
- * ```ts
+ * ```ts  @import.meta.vitest
  * const { of, delay } = await import("iterkit");
  *
  * const source = of(1, 2, 3);
@@ -177,7 +177,7 @@ export const delay = <T, TArgs extends unknown[] = []>(
  * Maps each item emitted by the source generator to an inner generator and flattens the results.
  *
  * @example
- * ```ts
+ * ```ts  @import.meta.vitest
  * const { of, concatMap } = await import("iterkit");
  *
  * const source = of(1, 2);
@@ -205,7 +205,7 @@ export const concatMap = <T, U, TArgs extends unknown[] = []>(
  * Catches errors from the source generator and switches to a backup generator.
  *
  * @example
- * ```ts
+ * ```ts  @import.meta.vitest
  * const { of, throwError, catchError } = await import("iterkit");
  *
  * const source = throwError(new Error("Oops"));
@@ -241,7 +241,7 @@ export const catchError = <T, TArgs extends unknown[] = []>(
  * Catches errors from the source generator and returns a default value.
  *
  * @example
- * ```ts
+ * ```ts  @import.meta.vitest
  * const { of, throwError, catchErrorDefault } = await import("iterkit");
  *
  * const source = throwError(new Error("Oops"));
@@ -266,7 +266,7 @@ export const catchErrorDefault = <T, TArgs extends unknown[] = []>(
  * Catches errors from the source generator and retries up to maxRetries times with an optional delay.
  *
  * @example
- * ```ts
+ * ```ts  @import.meta.vitest
  * const { retry } = await import("iterkit");
  *
  * let attempt = 0;
@@ -307,7 +307,7 @@ export const retry =
  * Adds cancellation support to the source generator.
  *
  * @example
- * ```ts
+ * ```ts  @import.meta.vitest
  * const { of, delay, withCancellation } = await import("iterkit");
  *
  * // A delayed source emitting 1..5

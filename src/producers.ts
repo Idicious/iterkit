@@ -4,7 +4,7 @@ import type { GenFn } from "./types.js";
  * Creates a synchronous generator function from a list of values.
  *
  * @example
- * ```ts
+ * ```ts  @import.meta.vitest
  * const { of } = await import("iterkit");
  *
  * const source = of(1, 2, 3);
@@ -25,7 +25,7 @@ export function of<T>(...values: T[]): GenFn<T> {
  * Examples of iterables include arrays, sets, and maps.
  *
  * @example
- * ```ts
+ * ```ts  @import.meta.vitest
  * const { from } = await import("iterkit");
  *
  * const source = from(new Set([1, 1, 2, 2, 3, 3, 3]));
@@ -35,7 +35,7 @@ export function of<T>(...values: T[]): GenFn<T> {
  * ```
  *
  * @example
- * ```ts
+ * ```ts  @import.meta.vitest
  * const { from } = await import("iterkit");
  *
  * const source = from(new Map([[1, "a"], [2, "b"], [3, "c"]]));
@@ -45,7 +45,7 @@ export function of<T>(...values: T[]): GenFn<T> {
  * ```
  *
  * @example
- * ```ts
+ * ```ts  @import.meta.vitest
  * const { from } = await import("iterkit");
  *
  * const source = from([1, 2, 3]);
@@ -65,7 +65,7 @@ export function from<T>(it: Iterable<T>): GenFn<T> {
  * Creates an async generator function from a promise.
  *
  * @example
- * ```ts
+ * ```ts  @import.meta.vitest
  * const { fromPromise } = await import("iterkit");
  *
  * const source = fromPromise(Promise.resolve(42));
@@ -87,7 +87,7 @@ export function fromPromise<T>(it: Promise<T>): GenFn<T> {
  * Creates an async generator function that throws an error.
  *
  * @example
- * ```ts
+ * ```ts  @import.meta.vitest
  * const { throwError } = await import("iterkit");
  *
  * const source = throwError(new Error("Test error"));
@@ -107,7 +107,7 @@ export function throwError(err: unknown): GenFn<never> {
  * Merges multiple generator functions into a single generator function.
  *
  * @example
- * ```ts
+ * ```ts  @import.meta.vitest
  * const { merge, of } = await import("iterkit");
  *
  * const source1 = of(1, 2, 3);

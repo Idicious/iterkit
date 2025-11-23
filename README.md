@@ -27,7 +27,7 @@ npm install iterkit
 
 ### Quick Example
 
-```ts
+```ts @import.meta.vitest
 const { of, pipe, map, filter } = await import("iterkit");
 
 const numbers = of(1, 2, 3, 4, 5);
@@ -80,6 +80,9 @@ const transform = pipe(
 );
 
 const run = transform(of(1, 2, 3, 4));
+const result = await Array.fromAsync(run());
+
+expect(result).toEqual([6, 8]);
 ```
 
 ---
