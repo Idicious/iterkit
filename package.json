@@ -6,7 +6,6 @@
   "scripts": {
     "test": "vitest",
     "build": "rollup -c",
-    "build:docs": "typedoc",
     "prepublishOnly": "npm run build",
     "postinstall": "patch-package"
   },
