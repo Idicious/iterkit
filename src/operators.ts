@@ -1,6 +1,6 @@
 import { of } from "./producers.js";
 import type { GenFn, Operator } from "./types.js";
-import { sleep } from "./utils.js";
+import { sleep, toIterator } from "./utils.js";
 
 /**
  * Maps each item emitted by the source generator using the provided function.
@@ -267,6 +267,10 @@ export const catchErrorDefault = <T, TArgs extends unknown[] = []>(
 /**
  * Catches errors from the source generator and retries up to maxRetries times with an optional delay.
  *
+ * Each retry re-runs the source from the start and skips the items already
+ * emitted, so consumers never see duplicates. This assumes the source yields
+ * the same items in the same order on every run.
+ *
  * @example
  * ```ts  @import.meta.vitest
  * const { retry } = await import("iterkit");
@@ -283,6 +287,23 @@ export const catchErrorDefault = <T, TArgs extends unknown[] = []>(
  * expect(result).toEqual([1]);
  * ```
  *
+ * @example
+ * ```ts  @import.meta.vitest
+ * const { retry } = await import("iterkit");
+ *
+ * let attempt = 0;
+ * const source = function* () {
+ *   yield 1;
+ *   if (attempt++ === 0) {
+ *     throw Error("Temporary failure");
+ *   }
+ *   yield 2;
+ * }
+ *
+ * const result = await Array.fromAsync(retry(1)(source)());
+ * expect(result).toEqual([1, 2]);
+ * ```
+ *
  * @param maxRetries
  * @param delayMs
  * @returns An operator function that retries the source generator on error.
@@ -294,9 +315,16 @@ export const retry =
   ): Operator<T, T, TArgs> =>
   (source) =>
     async function* (...args: TArgs) {
+      let emitted = 0;
+
       for (let attempt = 0; ; attempt++) {
         try {
-          yield* source(...args);
+          let index = 0;
+          for await (const item of source(...args)) {
+            if (index++ < emitted) continue;
+            emitted++;
+            yield item;
+          }
           return;
         } catch (error) {
           if (attempt >= maxRetries) throw error;
@@ -307,6 +335,10 @@ export const retry =
 
 /**
  * Adds cancellation support to the source generator.
+ *
+ * Aborting the signal ends the stream immediately, even while the source is
+ * waiting for its next item. The source is then closed so its cleanup runs;
+ * for an async source that happens once its in-flight wait settles.
  *
  * @example
  * ```ts  @import.meta.vitest
@@ -340,9 +372,37 @@ export const withCancellation = <T, TArgs extends unknown[] = []>(
 ): ((signal: AbortSignal) => GenFn<T, TArgs>) => {
   return (signal: AbortSignal) => {
     return async function* (...args: TArgs) {
-      for await (const item of source(...args)) {
-        if (signal.aborted) return;
-        yield item;
+      if (signal.aborted) return;
+
+      const iterator = toIterator(source(...args));
+      let onAbort!: () => void;
+      const aborted = new Promise<null>((resolve) => {
+        onAbort = () => resolve(null);
+        signal.addEventListener("abort", onAbort, { once: true });
+      });
+
+      let finished = false;
+      try {
+        while (true) {
+          const pending = Promise.resolve(iterator.next());
+          const result = await Promise.race([pending, aborted]);
+
+          if (result === null) {
+            pending.catch(() => {});
+            return;
+          }
+          if (result.done) {
+            finished = true;
+            return;
+          }
+
+          yield result.value;
+          if (signal.aborted) return;
+        }
+      } finally {
+        signal.removeEventListener("abort", onAbort);
+        // Not awaited, so an abort isn't held up by a source that is mid-wait.
+        if (!finished) Promise.resolve(iterator.return?.()).catch(() => {});
       }
     };
   };

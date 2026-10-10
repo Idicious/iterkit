@@ -1,5 +1,13 @@
 import { describe, expect, test } from "vitest";
-import { catchError, concatMap, filter, map, take } from "./operators.js";
+import {
+  catchError,
+  concatMap,
+  filter,
+  map,
+  retry,
+  take,
+  withCancellation,
+} from "./operators.js";
 import { from, of, throwError } from "./producers.js";
 
 describe("operators", () => {
@@ -69,5 +77,100 @@ describe("operators", () => {
     const result = await Array.fromAsync(take(0)(source)());
     expect(result).toEqual([]);
     expect(pulled).toBe(0);
+  });
+
+  test("retry does not re-emit items from a failed attempt", async () => {
+    let attempt = 0;
+    const source = function* () {
+      attempt++;
+      yield "a";
+      if (attempt === 1) throw new Error("Temporary failure");
+      yield "b";
+      if (attempt === 2) throw new Error("Temporary failure");
+      yield "c";
+    };
+
+    const result = await Array.fromAsync(retry(2)(source)());
+    expect(result).toEqual(["a", "b", "c"]);
+    expect(attempt).toBe(3);
+  });
+
+  test("retry rethrows once retries are exhausted", async () => {
+    const source = function* () {
+      yield 1;
+      throw new Error("Permanent failure");
+    };
+
+    const emitted: number[] = [];
+    const run = async () => {
+      for await (const item of retry<number>(1)(source)()) emitted.push(item);
+    };
+
+    await expect(run()).rejects.toThrow("Permanent failure");
+    expect(emitted).toEqual([1]);
+  });
+
+  test("withCancellation stops a pending wait on abort", async () => {
+    let closed = false;
+    const source = async function* () {
+      try {
+        yield 1;
+        await new Promise((r) => setTimeout(r, 1000));
+        yield 2;
+      } finally {
+        closed = true;
+      }
+    };
+
+    const controller = new AbortController();
+    const cancellable = withCancellation(source)(controller.signal);
+
+    const start = Date.now();
+    setTimeout(() => controller.abort(), 20);
+    const result = await Array.fromAsync(cancellable());
+
+    expect(result).toEqual([1]);
+    expect(Date.now() - start).toBeLessThan(500);
+
+    // The source is closed once its in-flight wait settles.
+    await new Promise((r) => setTimeout(r, 1100));
+    expect(closed).toBe(true);
+  });
+
+  test("withCancellation does not pull from the source if already aborted", async () => {
+    let pulled = 0;
+    const source = function* () {
+      while (true) yield ++pulled;
+    };
+
+    const controller = new AbortController();
+    controller.abort();
+
+    const result = await Array.fromAsync(
+      withCancellation(source)(controller.signal)()
+    );
+    expect(result).toEqual([]);
+    expect(pulled).toBe(0);
+  });
+
+  test("withCancellation closes the source when aborted between items", async () => {
+    let closed = false;
+    const source = function* () {
+      try {
+        for (let i = 1; ; i++) yield i;
+      } finally {
+        closed = true;
+      }
+    };
+
+    const controller = new AbortController();
+    const results: number[] = [];
+    for await (const value of withCancellation(source)(controller.signal)()) {
+      results.push(value);
+      if (value === 2) controller.abort();
+    }
+
+    expect(results).toEqual([1, 2]);
+    expect(closed).toBe(true);
   });
 });
