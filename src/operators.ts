@@ -104,10 +104,12 @@ export const take = <T, TArgs extends unknown[] = []>(
 ): Operator<T, T, TArgs> => {
   return (source) => {
     return async function* (...args: TArgs) {
+      if (n <= 0) return;
+
       let taken = 0;
       for await (const item of source(...args)) {
-        if (taken++ >= n) break;
         yield item;
+        if (++taken >= n) return;
       }
     };
   };
