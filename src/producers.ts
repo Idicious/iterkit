@@ -100,7 +100,9 @@ export function fromPromise<T>(it: Promise<T>): GenFn<T> {
  * @returns A generator function that throws the provided error.
  */
 export function throwError(err: unknown): GenFn<never> {
-  return fromPromise(Promise.reject(err));
+  return async function* () {
+    throw err;
+  };
 }
 
 /**
@@ -139,21 +141,31 @@ export function merge<const T extends readonly GenFn<any>[]>(
       pending: Promise.resolve(iterator.next()),
     }));
 
-    while (actives.length) {
-      const { index, result } = await Promise.race(
-        actives.map((active, index) =>
-          active.pending.then((result) => ({ index, result }))
-        )
-      );
+    try {
+      while (actives.length) {
+        const { index, result } = await Promise.race(
+          actives.map((active, index) =>
+            active.pending.then((result) => ({ index, result }))
+          )
+        );
 
-      const active = actives[index]!;
+        const active = actives[index]!;
 
-      if (result.done) {
-        actives.splice(index, 1);
-        continue;
-      } else {
-        active.pending = Promise.resolve(active.iterator.next());
-        yield result.value;
+        if (result.done) {
+          actives.splice(index, 1);
+          continue;
+        } else {
+          active.pending = Promise.resolve(active.iterator.next());
+          yield result.value;
+        }
+      }
+    } finally {
+      // Close sources that are still open when the consumer stops early or a
+      // source throws. Not awaited, so an idle async source can't block the
+      // consumer; its cleanup runs once its in-flight `next()` settles.
+      for (const { iterator, pending } of actives) {
+        pending.catch(() => {});
+        Promise.resolve(iterator.return?.()).catch(() => {});
       }
     }
   };
