@@ -1,6 +1,6 @@
 import { of } from "./producers.js";
 import type { GenFn, Operator } from "./types.js";
-import { sleep } from "./utils.js";
+import { sleep, toIterator } from "./utils.js";
 
 /**
  * Maps each item emitted by the source generator using the provided function.
@@ -267,6 +267,10 @@ export const catchErrorDefault = <T, TArgs extends unknown[] = []>(
 /**
  * Catches errors from the source generator and retries up to maxRetries times with an optional delay.
  *
+ * Each retry restarts the source from the beginning, so items emitted before
+ * the failure are emitted again. To retry only the work that failed for a
+ * single item, use {@link retryEach}.
+ *
  * @example
  * ```ts  @import.meta.vitest
  * const { retry } = await import("iterkit");
@@ -306,7 +310,74 @@ export const retry =
     };
 
 /**
+ * Runs an operator on each item separately, retrying it for that item up to
+ * maxRetries times with an optional delay. Only the failing item is retried;
+ * items already processed are not run again.
+ *
+ * Use it with operators that work on one item at a time, such as `map`,
+ * `filter`, `concatMap`, or a `pipe` of them. Operators that track state across
+ * items, such as `take` or `skip`, would apply to each item on its own.
+ *
+ * The outputs for an item are emitted once the operator succeeds for it, so a
+ * failed attempt never emits partial results.
+ *
+ * @example
+ * ```ts  @import.meta.vitest
+ * const { of, map, retryEach } = await import("iterkit");
+ *
+ * const calls: number[] = [];
+ * let failed = false;
+ * const fetchItem = map(async (id: number) => {
+ *   calls.push(id);
+ *   if (id === 2 && !failed) {
+ *     failed = true;
+ *     throw Error("Temporary failure");
+ *   }
+ *   return id * 10;
+ * });
+ *
+ * const result = await Array.fromAsync(retryEach(fetchItem, 1)(of(1, 2, 3))());
+ * expect(result).toEqual([10, 20, 30]);
+ * expect(calls).toEqual([1, 2, 2, 3]);
+ * ```
+ *
+ * @param operator The operator to run for each item.
+ * @param maxRetries Number of retries per item after the first attempt fails.
+ * @param delayMs Milliseconds to wait before each retry.
+ * @returns An operator function that runs the operator per item with retries.
+ */
+export const retryEach =
+  <T, U, TArgs extends unknown[] = []>(
+    operator: Operator<T, U, TArgs>,
+    maxRetries = 1,
+    delayMs = 0
+  ): Operator<T, U, TArgs> =>
+  (source) =>
+    async function* (...args: TArgs) {
+      for await (const item of source(...args)) {
+        const run = operator(() => [item]);
+
+        let results: U[];
+        for (let attempt = 0; ; attempt++) {
+          try {
+            results = await Array.fromAsync(run(...args));
+            break;
+          } catch (error) {
+            if (attempt >= maxRetries) throw error;
+            if (delayMs) await sleep(delayMs);
+          }
+        }
+
+        yield* results;
+      }
+    };
+
+/**
  * Adds cancellation support to the source generator.
+ *
+ * Aborting the signal ends the stream immediately, even while the source is
+ * waiting for its next item. The source is then closed so its cleanup runs;
+ * for an async source that happens once its in-flight wait settles.
  *
  * @example
  * ```ts  @import.meta.vitest
@@ -340,9 +411,37 @@ export const withCancellation = <T, TArgs extends unknown[] = []>(
 ): ((signal: AbortSignal) => GenFn<T, TArgs>) => {
   return (signal: AbortSignal) => {
     return async function* (...args: TArgs) {
-      for await (const item of source(...args)) {
-        if (signal.aborted) return;
-        yield item;
+      if (signal.aborted) return;
+
+      const iterator = toIterator(source(...args));
+      let onAbort!: () => void;
+      const aborted = new Promise<null>((resolve) => {
+        onAbort = () => resolve(null);
+        signal.addEventListener("abort", onAbort, { once: true });
+      });
+
+      let finished = false;
+      try {
+        while (true) {
+          const pending = Promise.resolve(iterator.next());
+          const result = await Promise.race([pending, aborted]);
+
+          if (result === null) {
+            pending.catch(() => {});
+            return;
+          }
+          if (result.done) {
+            finished = true;
+            return;
+          }
+
+          yield result.value;
+          if (signal.aborted) return;
+        }
+      } finally {
+        signal.removeEventListener("abort", onAbort);
+        // Not awaited, so an abort isn't held up by a source that is mid-wait.
+        if (!finished) Promise.resolve(iterator.return?.()).catch(() => {});
       }
     };
   };

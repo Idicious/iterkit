@@ -1,4 +1,5 @@
 import type { GenFn } from "./types.js";
+import { toIterator } from "./utils.js";
 
 /**
  * Creates a synchronous generator function from a list of values.
@@ -128,13 +129,7 @@ export function merge<const T extends readonly GenFn<any>[]>(
   ...generators: T
 ): GenFn<T extends readonly GenFn<infer U>[] ? Awaited<U> : never> {
   return async function* () {
-    const iterators = generators.map((generator) => {
-      const iterable = generator();
-
-      return Symbol.asyncIterator in iterable
-        ? iterable[Symbol.asyncIterator]()
-        : iterable[Symbol.iterator]();
-    });
+    const iterators = generators.map((generator) => toIterator(generator()));
 
     const actives = iterators.map((iterator) => ({
       iterator,
